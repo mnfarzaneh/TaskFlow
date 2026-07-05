@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- دایره پس‌زمینه -->
+    <path
+        android:fillColor="#E8F5D4"
+        android:pathData="M60,10 C32.4,10 10,32.4 10,60 C10,87.6 32.4,110 60,110 C87.6,110 110,87.6 110,60 C110,32.4 87.6,10 60,10Z"/>
+
+    <!-- لیست خطوط -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#8FBB47"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M42,45 L78,45"/>
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#8FBB47"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M42,60 L70,60"/>
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#CBDFA0"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M42,75 L62,75"/>
+
+    <!-- نقطه‌های کنار -->
+    <path
+        android:fillColor="#5A7D24"
+        android:pathData="M36,45 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"/>
+    <path
+        android:fillColor="#5A7D24"
+        android:pathData="M36,60 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"/>
+    <path
+        android:fillColor="#CBDFA0"
+        android:pathData="M36,75 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"/>
+
+</vector>

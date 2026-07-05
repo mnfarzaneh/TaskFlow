@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- دایره پس‌زمینه -->
+    <path
+        android:fillColor="#E8F5D4"
+        android:pathData="M60,10 C32.4,10 10,32.4 10,60 C10,87.6 32.4,110 60,110 C87.6,110 110,87.6 110,60 C110,32.4 87.6,10 60,10Z"/>
+
+    <!-- حلقه زنجیره خط‌چین -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#8FBB47"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M60,35 C46.2,35 35,46.2 35,60 C35,73.8 46.2,85 60,85 C73.8,85 85,73.8 85,60 C85,46.2 73.8,35 60,35Z" />
+
+    <!-- علامت + وسط -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#5A7D24"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M60,50 L60,70"/>
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#5A7D24"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M50,60 L70,60"/>
+
+</vector>
