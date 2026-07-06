@@ -44,22 +44,6 @@ class CreateChainUseCase @Inject constructor(
                     reminderAt  = taskInput.reminderAt
                 )
             )
-
-            // ۳. فقط برای اولین وظیفه هشدار بذار
-            if (index == 0) {
-                val firstTask = Task(
-                    id          = taskId,
-                    chainId     = chainId,
-                    title       = taskInput.title,
-                    description = taskInput.description,
-                    status      = TaskStatus.PENDING,
-                    order       = 0,
-                    deadlineAt  = taskInput.deadlineAt,
-                    reminderAt  = taskInput.reminderAt
-                )
-                notificationScheduler.scheduleReminder(firstTask)
-                notificationScheduler.scheduleDeadline(firstTask)
-            }
         }
     }
 }

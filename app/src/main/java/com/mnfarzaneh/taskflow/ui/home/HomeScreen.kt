@@ -51,7 +51,10 @@ import androidx.compose.ui.text.style.TextDirection
 import com.mnfarzaneh.taskflow.utils.toPersian
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import com.mnfarzaneh.taskflow.R
+import com.mnfarzaneh.taskflow.utils.formatPersianDate
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -61,15 +64,16 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    GlassBackground {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize()) {
                 // ── هدر دستی به جای TopAppBar ──────────
                 Text(
-                    text       = "TaskFlow",
+                    text = "TaskFlow",
                     fontWeight = FontWeight.Bold,
-                    color      = Matcha800,
-                    style      = MaterialTheme.typography.headlineSmall,
-                    modifier   = Modifier.padding(start = 20.dp, top = 24.dp, bottom = 8.dp)
+                    color = Matcha800,
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(start = 20.dp, top = 24.dp, bottom = 8.dp)
                 )
                 if (uiState.isLoading) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -77,24 +81,24 @@ fun HomeScreen(
                     }
                 } else {
                     LazyColumn(
-                        modifier        = Modifier.fillMaxSize(),
-                        contentPadding  = PaddingValues(16.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         item {
                             StatsRow(
-                                stats          = uiState.stats,
-                                onDoneClick    = { viewModel.showDoneSheet() },
+                                stats = uiState.stats,
+                                onDoneClick = { viewModel.showDoneSheet() },
                                 onOverdueClick = { viewModel.showOverdueSheet() }
                             )
                         }
                         if (uiState.chains.isNotEmpty()) {
                             item {
                                 Text(
-                                    text       = "زنجیره‌های من",
-                                    style      = MaterialTheme.typography.titleMedium,
+                                    text = "زنجیره‌های من",
+                                    style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    modifier   = Modifier.padding(vertical = 4.dp)
+                                    modifier = Modifier.padding(vertical = 4.dp)
                                 )
                             }
                         }
@@ -103,10 +107,10 @@ fun HomeScreen(
                         } else {
                             items(uiState.chainProgresses, key = { it.chain.id }) { progress ->
                                 SwipeableChainCard(
-                                    chain       = progress.chain,
-                                    progress    = progress,
-                                    onClick     = { onChainClick(progress.chain.id) },
-                                    onDelete    = { viewModel.deleteChain(progress.chain) },
+                                    chain = progress.chain,
+                                    progress = progress,
+                                    onClick = { onChainClick(progress.chain.id) },
+                                    onDelete = { viewModel.deleteChain(progress.chain) },
                                     onDuplicate = { viewModel.duplicateChain(progress.chain.id) }
                                 )
                             }
@@ -118,11 +122,11 @@ fun HomeScreen(
             }
             // ── FAB شناور ───────────────────────────────
             FloatingActionButton(
-                onClick        = onAddChain,
+                onClick = onAddChain,
                 containerColor = Matcha600,
-                contentColor   = Color.White,
-                shape          = RoundedCornerShape(16.dp),
-                modifier       = Modifier
+                contentColor = Color.White,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(end = 20.dp, bottom = 2.dp)  // ← bottom رو از 20 به 12 کم کردم
             ) {
@@ -132,10 +136,10 @@ fun HomeScreen(
             // ── Done Sheet ────────────────────────────────────────────
             if (uiState.showDoneSheet) {
                 TaskListBottomSheet(
-                    title       = "ددلاین‌های انجام شده",
-                    tasks       = uiState.doneTasks,
-                    color       = StatusDone,
-                    onDismiss   = { viewModel.hideSheets() },
+                    title = "ددلاین‌های انجام شده",
+                    tasks = uiState.doneTasksWithChain,
+                    color = StatusDone,
+                    onDismiss = { viewModel.hideSheets() },
                     onTaskClick = onChainClick
                 )
             }
@@ -143,15 +147,15 @@ fun HomeScreen(
             // ── Overdue Sheet ─────────────────────────────────────────
             if (uiState.showOverdueSheet) {
                 TaskListBottomSheet(
-                    title       = "ددلاین‌های منقضی",
-                    tasks       = uiState.overdueTasks,
-                    color       = DeadlineDanger,
-                    onDismiss   = { viewModel.hideSheets() },
+                    title = "ددلاین‌های منقضی",
+                    tasks = uiState.overdueTasksWithChain,
+                    color = DeadlineDanger,
+                    onDismiss = { viewModel.hideSheets() },
                     onTaskClick = onChainClick
                 )
             }
         }
-
+    }
 }
 
 // ── ردیف آمار ─────────────────────────────────────────────
@@ -574,13 +578,12 @@ private data class Quadruple<A, B, C, D>(
 @Composable
 private fun TaskListBottomSheet(
     title: String,
-    tasks: List<Task>,
+    tasks: List<TaskWithChain>,
     color: androidx.compose.ui.graphics.Color,
     onDismiss: () -> Unit,
     onTaskClick: (Long) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
-    val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -592,7 +595,6 @@ private fun TaskListBottomSheet(
                 .padding(horizontal = 16.dp)
                 .navigationBarsPadding()
         ) {
-            // هدر
             Row(
                 modifier              = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -609,8 +611,10 @@ private fun TaskListBottomSheet(
                     color = color.copy(alpha = 0.1f)
                 ) {
                     Text(
-                        text     = "${tasks.size} وظیفه",
-                        style    = MaterialTheme.typography.labelMedium,
+                        text     = "${tasks.size.toPersian()} وظیفه",
+                        style    = MaterialTheme.typography.labelMedium.copy(
+                            textDirection = TextDirection.Rtl
+                        ),
                         color    = color,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
@@ -639,20 +643,17 @@ private fun TaskListBottomSheet(
                     contentPadding = PaddingValues(bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(tasks, key = { it.id }) { task ->
+                    items(tasks, key = { it.task.id }) { taskWithChain ->
                         SheetTaskCard(
-                            task       = task,
-                            color      = color,
-                            dateFormat = dateFormat,
-                            onClick    = {
+                            taskWithChain = taskWithChain,
+                            color         = color,
+                            onClick       = {
                                 onDismiss()
-                                onTaskClick(task.chainId)
+                                onTaskClick(taskWithChain.task.chainId)
                             }
                         )
                     }
                 }
-
-
             }
         }
     }
@@ -660,9 +661,8 @@ private fun TaskListBottomSheet(
 
 @Composable
 private fun SheetTaskCard(
-    task: Task,
+    taskWithChain: TaskWithChain,
     color: androidx.compose.ui.graphics.Color,
-    dateFormat: SimpleDateFormat,
     onClick: () -> Unit
 ) {
     Card(
@@ -693,16 +693,30 @@ private fun SheetTaskCard(
             }
 
             Column(modifier = Modifier.weight(1f)) {
+                // عنوان وظیفه
                 Text(
-                    text       = task.title,
+                    text       = taskWithChain.task.title,
                     style      = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
                 )
-                task.deadlineAt?.let {
+                // اسم زنجیره
+                if (taskWithChain.chainTitle.isNotEmpty()) {
                     Text(
-                        text  = dateFormat.format(Date(it)),
+                        text = buildAnnotatedString {
+                            append("زنجیره: ${taskWithChain.chainTitle}")
+                        },
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            textDirection = TextDirection.Rtl
+                        ),
+                        color = color.copy(alpha = 0.8f)
+                    )
+                }
+                // تاریخ deadline
+                taskWithChain.task.deadlineAt?.let {
+                    Text(
+                        text  = formatPersianDate(it),
                         style = MaterialTheme.typography.labelSmall,
-                        color = color
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
             }

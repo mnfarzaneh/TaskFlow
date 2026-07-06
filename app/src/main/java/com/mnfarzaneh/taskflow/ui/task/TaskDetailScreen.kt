@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Warning
 import com.mnfarzaneh.taskflow.ui.chain.matchaTextFieldColors
 import com.mnfarzaneh.taskflow.utils.formatPersianDate
 import com.mnfarzaneh.taskflow.utils.toPersian
+import com.mnfarzaneh.taskflow.ui.components.PersianDatePickerDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -444,39 +445,25 @@ private fun ActionButtons(
 }
 
 // ── بخش تنظیم یادآوری ────────────────────────────────────
-
 @Composable
 private fun ReminderSection(
     reminderAt: Long?,
     onSetReminder: (Long) -> Unit,
     onRemoveReminder: () -> Unit
 ) {
-    val context  = LocalContext.current
-    val calendar = Calendar.getInstance()
-    val dateFormat = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
+    var showDialog by remember { mutableStateOf(false) }
 
-    val showPicker = {
-        DatePickerDialog(
-            context,
-            { _, year, month, day ->
-                TimePickerDialog(
-                    context,
-                    { _, hour, minute ->
-                        calendar.set(year, month, day, hour, minute, 0)
-                        val selected = calendar.timeInMillis
-                        if (selected > System.currentTimeMillis()) {
-                            onSetReminder(selected)
-                        }
-                    },
-                    calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE),
-                    true
-                ).show()
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
+    if (showDialog) {
+        PersianDatePickerDialog(
+            initialTimestamp = reminderAt,
+            onDismiss        = { showDialog = false },
+            onConfirm        = { timestamp ->
+                if (timestamp > System.currentTimeMillis()) {
+                    onSetReminder(timestamp)
+                }
+                showDialog = false
+            }
+        )
     }
 
     Box(
@@ -515,7 +502,7 @@ private fun ReminderSection(
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedButton(
-                            onClick = showPicker,
+                            onClick = { showDialog = true },
                             colors  = ButtonDefaults.outlinedButtonColors(contentColor = Matcha700)
                         ) {
                             Text("تغییر", style = MaterialTheme.typography.labelMedium)
@@ -532,11 +519,15 @@ private fun ReminderSection(
                 }
             } else {
                 OutlinedButton(
-                    onClick  = showPicker,
+                    onClick  = { showDialog = true },
                     modifier = Modifier.fillMaxWidth(),
                     colors   = ButtonDefaults.outlinedButtonColors(contentColor = Matcha700)
                 ) {
-                    Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Icon(
+                        Icons.Default.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
                     Spacer(Modifier.width(8.dp))
                     Text("تنظیم یادآوری")
                 }

@@ -17,26 +17,28 @@ class ReminderWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     companion object {
-        const val CHANNEL_ID       = "taskflow_reminders"
-        const val KEY_TASK_ID      = "task_id"
-        const val KEY_TASK_TITLE   = "task_title"
+        const val CHANNEL_ID        = "taskflow_reminders"
+        const val KEY_TASK_ID       = "task_id"
+        const val KEY_TASK_TITLE    = "task_title"
+        const val KEY_CHAIN_TITLE   = "chain_title"    // ← اضافه شد
     }
 
     override suspend fun doWork(): Result {
-        val taskId    = inputData.getLong(KEY_TASK_ID, -1L)
-        val taskTitle = inputData.getString(KEY_TASK_TITLE) ?: return Result.failure()
+        val taskId     = inputData.getLong(KEY_TASK_ID, -1L)
+        val taskTitle  = inputData.getString(KEY_TASK_TITLE)  ?: return Result.failure()
+        val chainTitle = inputData.getString(KEY_CHAIN_TITLE) ?: ""
+        android.util.Log.d("DEADLINE_DEBUG", "taskTitle=$taskTitle, chainTitle=$chainTitle, allKeys=${inputData.keyValueMap.keys}")
 
         if (taskId == -1L) return Result.failure()
 
-        showNotification(taskId, taskTitle)
+        showNotification(taskId, taskTitle, chainTitle)
         return Result.success()
     }
 
-    private fun showNotification(taskId: Long, taskTitle: String) {
+    private fun showNotification(taskId: Long, taskTitle: String, chainTitle: String) {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE)
                 as NotificationManager
 
-        // ساخت Channel (برای Android 8+)
         val channel = NotificationChannel(
             CHANNEL_ID,
             "یادآوری وظایف",
@@ -48,8 +50,12 @@ class ReminderWorker @AssistedInject constructor(
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("یادآوری وظیفه")
+            .setContentTitle("یادآوری — $chainTitle")
             .setContentText(taskTitle)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText("«$taskTitle» از زنجیره «$chainTitle»")
+            )
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()

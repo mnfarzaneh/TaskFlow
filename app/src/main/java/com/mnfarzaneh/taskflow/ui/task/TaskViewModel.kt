@@ -69,20 +69,15 @@ class TaskViewModel @Inject constructor(
     fun setReminder(reminderAt: Long) {
         val task = _uiState.value.task ?: return
         viewModelScope.launch {
-            // ذخیره در دیتابیس
             repository.updateReminder(taskId, reminderAt)
-
-            // schedule کردن notification
+            val chain       = repository.getChainById(task.chainId)
+            val chainTitle  = chain?.title ?: ""
             val updatedTask = task.copy(reminderAt = reminderAt)
             notificationScheduler.cancelTaskNotifications(taskId)
-            notificationScheduler.scheduleReminder(updatedTask)
-            notificationScheduler.scheduleDeadline(updatedTask)
-
+            notificationScheduler.scheduleReminder(updatedTask, chainTitle)
+            notificationScheduler.scheduleDeadline(updatedTask, chainTitle)
             _uiState.update {
-                it.copy(
-                    task        = updatedTask,
-                    reminderSet = true
-                )
+                it.copy(task = updatedTask, reminderSet = true)
             }
         }
     }
@@ -116,5 +111,6 @@ class TaskViewModel @Inject constructor(
             loadTask()
         }
     }
+
 }
 

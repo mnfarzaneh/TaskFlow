@@ -37,9 +37,12 @@ class CompleteTaskUseCase @Inject constructor(
         nextTask?.let {
             if (it.status == TaskStatus.LOCKED) {
                 val updatedTask = it.copy(status = TaskStatus.PENDING)
+                val chain = repository.getChainById(task.chainId)
+                val chainTitle = chain?.title ?: ""
+                android.util.Log.d("CHAIN_DEBUG", "chainId=${task.chainId}, chainTitle=$chainTitle")
                 repository.updateTask(updatedTask)
-                notificationScheduler.scheduleReminder(updatedTask)
-                notificationScheduler.scheduleDeadline(updatedTask)
+                notificationScheduler.scheduleReminder(updatedTask, chainTitle)
+                notificationScheduler.scheduleDeadline(updatedTask, chainTitle)
             }
         }
         widgetUpdater.update(context)

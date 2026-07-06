@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mnfarzaneh.taskflow.ui.components.PersianDatePickerDialog
 import com.mnfarzaneh.taskflow.ui.theme.*
 import com.mnfarzaneh.taskflow.utils.formatPersianDate
+import com.mnfarzaneh.taskflow.utils.toPersian
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -106,7 +107,7 @@ fun CreateChainScreen(
                             color      = Matcha800
                         )
                         Text(
-                            text  = "${uiState.tasks.size} وظیفه",
+                            text  = "${uiState.tasks.size.toPersian()} وظیفه",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.outline
                         )
@@ -187,7 +188,7 @@ private fun ChainInfoSection(
                 fontWeight = FontWeight.Bold,
                 color      = Matcha800
             )
-            OutlinedTextField(
+            PersianOutlinedTextField(
                 value           = title,
                 onValueChange   = onTitleChange,
                 label           = { Text("عنوان زنجیره") },
@@ -196,17 +197,15 @@ private fun ChainInfoSection(
                 singleLine      = true,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences
-                ),
-                colors = matchaTextFieldColors()
+                )
             )
-            OutlinedTextField(
+            PersianOutlinedTextField(
                 value         = description,
                 onValueChange = onDescChange,
                 label         = { Text("توضیحات (اختیاری)") },
                 modifier      = Modifier.fillMaxWidth(),
                 minLines      = 2,
-                maxLines      = 3,
-                colors        = matchaTextFieldColors()
+                maxLines      = 3
             )
         }
     }
@@ -260,19 +259,7 @@ private fun TaskDraftCard(
                         style      = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium
                     )
-                    if (index == 0) {
-                        Surface(
-                            shape = MaterialTheme.shapes.small,
-                            color = Matcha50
-                        ) {
-                            Text(
-                                text     = "اول",
-                                style    = MaterialTheme.typography.labelSmall,
-                                color    = Matcha600,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                            )
-                        }
-                    }
+
                 }
                 if (canRemove) {
                     IconButton(onClick = onRemove, modifier = Modifier.size(32.dp)) {
@@ -286,7 +273,7 @@ private fun TaskDraftCard(
                 }
             }
 
-            OutlinedTextField(
+            PersianOutlinedTextField(
                 value           = task.title,
                 onValueChange   = onTitleChange,
                 label           = { Text("عنوان وظیفه") },
@@ -294,17 +281,15 @@ private fun TaskDraftCard(
                 singleLine      = true,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences
-                ),
-                colors = matchaTextFieldColors()
+                )
             )
 
-            OutlinedTextField(
+            PersianOutlinedTextField(
                 value         = task.description,
                 onValueChange = onDescChange,
                 label         = { Text("توضیحات (اختیاری)") },
                 modifier      = Modifier.fillMaxWidth(),
-                maxLines      = 2,
-                colors        = matchaTextFieldColors()
+                maxLines      = 2
             )
 
             DeadlinePicker(

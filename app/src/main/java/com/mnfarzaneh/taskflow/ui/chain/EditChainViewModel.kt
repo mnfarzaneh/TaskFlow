@@ -205,8 +205,8 @@ class EditChainViewModel @Inject constructor(
                         // هشدار رو آپدیت کن
                         notificationScheduler.cancelTaskNotifications(existingTask.id)
                         if (existingTask.status != TaskStatus.DONE) {
-                            notificationScheduler.scheduleReminder(updatedTask)
-                            notificationScheduler.scheduleDeadline(updatedTask)
+                            notificationScheduler.scheduleReminder(updatedTask, state.chainTitle)
+                            notificationScheduler.scheduleDeadline(updatedTask, state.chainTitle)
                         }
                     } else {
                         // وظیفه جدید — اضافه کن
@@ -224,18 +224,19 @@ class EditChainViewModel @Inject constructor(
                         // اگه وظیفه قبلیش Done شده، این رو آزاد کن
                         val prevTask = oldTasks.getOrNull(index - 1)
                         if (prevTask?.status == TaskStatus.DONE) {
-                            repository.updateTask(
-                                Task(
-                                    id          = taskId,
-                                    chainId     = chainId,
-                                    title       = draft.title,
-                                    description = draft.description,
-                                    status      = TaskStatus.PENDING,
-                                    order       = index,
-                                    deadlineAt  = draft.deadlineAt,
-                                    reminderAt  = draft.reminderAt
-                                )
+                            val pendingTask = Task(
+                                id          = taskId,
+                                chainId     = chainId,
+                                title       = draft.title,
+                                description = draft.description,
+                                status      = TaskStatus.PENDING,
+                                order       = index,
+                                deadlineAt  = draft.deadlineAt,
+                                reminderAt  = draft.reminderAt
                             )
+                            repository.updateTask(pendingTask)
+                            notificationScheduler.scheduleReminder(pendingTask, state.chainTitle)
+                            notificationScheduler.scheduleDeadline(pendingTask, state.chainTitle)
                         }
                     }
                 }

@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mnfarzaneh.taskflow.ui.components.PersianDatePickerDialog
 import com.mnfarzaneh.taskflow.ui.theme.*
 import com.mnfarzaneh.taskflow.utils.formatPersianDate
+import com.mnfarzaneh.taskflow.utils.toPersian
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.text.SimpleDateFormat
@@ -141,7 +142,7 @@ fun EditChainScreen(
                             color      = Matcha800
                         )
                         Text(
-                            text  = "${uiState.tasks.size} وظیفه",
+                            text  = "${uiState.tasks.size.toPersian()} وظیفه",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.outline
                         )
@@ -344,7 +345,7 @@ private fun CompactTaskRow(
                 ) {
                     HorizontalDivider(color = GlassBorderDark)
 
-                    OutlinedTextField(
+                    PersianOutlinedTextField(
                         value           = task.title,
                         onValueChange   = onTitleChange,
                         label           = { Text("عنوان وظیفه") },
@@ -352,17 +353,15 @@ private fun CompactTaskRow(
                         singleLine      = true,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Sentences
-                        ),
-                        colors = matchaTextFieldColors()
+                        )
                     )
 
-                    OutlinedTextField(
+                    PersianOutlinedTextField(
                         value         = task.description,
                         onValueChange = onDescChange,
                         label         = { Text("توضیحات (اختیاری)") },
                         modifier      = Modifier.fillMaxWidth(),
-                        maxLines      = 2,
-                        colors        = matchaTextFieldColors()
+                        maxLines      = 2
                     )
 
                     DeadlinePickerRow(
@@ -466,7 +465,7 @@ private fun EditChainInfoSection(
                 fontWeight = FontWeight.Bold,
                 color      = Matcha800
             )
-            OutlinedTextField(
+            PersianOutlinedTextField(
                 value           = title,
                 onValueChange   = onTitleChange,
                 label           = { Text("عنوان زنجیره") },
@@ -474,17 +473,15 @@ private fun EditChainInfoSection(
                 singleLine      = true,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences
-                ),
-                colors = matchaTextFieldColors()
+                )
             )
-            OutlinedTextField(
+            PersianOutlinedTextField(
                 value         = description,
                 onValueChange = onDescChange,
                 label         = { Text("توضیحات (اختیاری)") },
                 modifier      = Modifier.fillMaxWidth(),
                 minLines      = 2,
-                maxLines      = 3,
-                colors        = matchaTextFieldColors()
+                maxLines      = 3
             )
         }
     }

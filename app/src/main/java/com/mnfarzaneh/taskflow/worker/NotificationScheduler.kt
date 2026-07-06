@@ -15,14 +15,15 @@ class NotificationScheduler @Inject constructor(
     private val workManager = WorkManager.getInstance(context)
 
     // ── یادآوری ──────────────────────────────────────────
-    fun scheduleReminder(task: Task) {
+    fun scheduleReminder(task: Task, chainTitle: String = "") {
         val reminderAt = task.reminderAt ?: return
         val delay = reminderAt - System.currentTimeMillis()
         if (delay <= 0) return
 
         val data = workDataOf(
             ReminderWorker.KEY_TASK_ID    to task.id,
-            ReminderWorker.KEY_TASK_TITLE to task.title
+            ReminderWorker.KEY_TASK_TITLE to task.title,
+            ReminderWorker.KEY_CHAIN_TITLE to chainTitle    // ← اضافه شد
         )
 
         val request = OneTimeWorkRequestBuilder<ReminderWorker>()
@@ -38,18 +39,17 @@ class NotificationScheduler @Inject constructor(
         )
     }
 
-    // ── ددلاین ───────────────────────────────────────────
-    fun scheduleDeadline(task: Task) {
+    fun scheduleDeadline(task: Task, chainTitle: String = "") {
         val deadlineAt = task.deadlineAt ?: return
         val delay = deadlineAt - System.currentTimeMillis()
         if (delay <= 0) return
 
         val data = workDataOf(
             DeadlineWorker.KEY_TASK_ID    to task.id,
-            DeadlineWorker.KEY_TASK_TITLE to task.title
+            DeadlineWorker.KEY_TASK_TITLE to task.title,
+            DeadlineWorker.KEY_CHAIN_TITLE to chainTitle    // ← اضافه شد
         )
 
-        // هشدار یک ساعت قبل از ددلاین
         val warningDelay = (delay - TimeUnit.HOURS.toMillis(1)).coerceAtLeast(0)
 
         val request = OneTimeWorkRequestBuilder<DeadlineWorker>()
@@ -64,7 +64,6 @@ class NotificationScheduler @Inject constructor(
             request
         )
     }
-
     // ── لغو هشدارها ──────────────────────────────────────
     fun cancelTaskNotifications(taskId: Long) {
         workManager.cancelUniqueWork("reminder_${taskId}")

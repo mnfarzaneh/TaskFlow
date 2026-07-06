@@ -10,7 +10,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.ui.text.style.TextDirection
+import com.mnfarzaneh.taskflow.ui.chain.matchaTextFieldColors
 
+@Composable
+fun PersianOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    label: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    singleLine: Boolean = false,
+    minLines: Int = 1,
+    maxLines: Int = Int.MAX_VALUE,
+    keyboardOptions: androidx.compose.foundation.text.KeyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default,
+    enabled: Boolean = true
+) {
+    OutlinedTextField(
+        value         = value,
+        onValueChange = onValueChange,
+        modifier      = modifier,
+        label         = label,
+        placeholder   = placeholder,
+        singleLine    = singleLine,
+        minLines      = minLines,
+        maxLines      = maxLines,
+        keyboardOptions = keyboardOptions,
+        enabled       = enabled,
+        textStyle     = androidx.compose.material3.LocalTextStyle.current.copy(
+            textDirection = TextDirection.Rtl
+        ),
+        colors = matchaTextFieldColors()
+    )
+}
 // ── پس‌زمینه اصلی اپ — گرادیان سبز ماچا ──────────────────
 @Composable
 fun GlassBackground(content: @Composable () -> Unit) {
