@@ -4,6 +4,11 @@ A Persian-first Android task manager with **chain-based dependency logic** — t
 
 ## Screenshots
 
+<img width="486" height="1080" alt="photo_2_2026-07-08_10-01-55" src="https://github.com/user-attachments/assets/0577b8a8-eff2-46b7-8cee-51376f71a133" />
+<img width="486" height="1080" alt="photo_8_2026-07-08_10-01-55" src="https://github.com/user-attachments/assets/5fbf4bb9-6d36-4170-95d7-1e69b23d7678" />
+<img width="486" height="1080" alt="photo_5_2026-07-08_10-01-55" src="https://github.com/user-attachments/assets/3cea77e7-89a9-461a-a68f-513a99a84fff" />
+<img width="486" height="1080" alt="photo_6_2026-07-08_10-01-55" src="https://github.com/user-attachments/assets/3be7576c-bc24-477f-bb38-0a4f6672d7b8" />
+
 > _Add screenshots here_
 
 ## Features
